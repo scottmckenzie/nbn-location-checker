@@ -91,9 +91,7 @@ jobs:
         run: exit 0
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false
-        with:
-          args: '-var="app_name=${{ env.AZURE_FUNCTIONAPP_NAME }}"'
+        run: terraform apply -auto-approve -input=false -var="app_name=${{ env.AZURE_FUNCTIONAPP_NAME }}"
         working-directory: ./terraform
 
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-github-actions?tabs=python
