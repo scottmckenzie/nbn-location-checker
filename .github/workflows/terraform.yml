@@ -90,6 +90,20 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: exit 0
 
+# https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-github-actions?tabs=python
+      - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: 'Resolve Project Dependencies Using Pip'
+        shell: bash
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+          popd
+
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false -var="app_name=${{ env.AZURE_FUNCTIONAPP_NAME }}"
         working-directory: ./terraform
