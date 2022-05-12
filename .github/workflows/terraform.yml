@@ -105,5 +105,5 @@ jobs:
           popd
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false -var="app_name=${{ env.AZURE_FUNCTIONAPP_NAME }}"
+        run: terraform apply -auto-approve -input=false -var="app_name=${{ env.AZURE_FUNCTIONAPP_NAME }}" -var="sendgrid_api_key=${{ secrets.SENDGRID_API_KEY }}"
         working-directory: ./terraform
