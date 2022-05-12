@@ -31,9 +31,9 @@ resource "azurerm_linux_function_app" "app" {
   storage_account_access_key = azurerm_storage_account.app.primary_access_key
 
   app_settings = {
-    "FUNCTIONS_WORKER_RUNTIME" = "python"
+    "FUNCTIONS_WORKER_RUNTIME"       = "python"
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
-    "WEBSITE_RUN_FROM_PACKAGE" = "https://${azurerm_storage_account.app.name}.blob.core.windows.net/${azurerm_storage_container.app.name}/${azurerm_storage_blob.app.name}${data.azurerm_storage_account_blob_container_sas.app.sas}"
+    "WEBSITE_RUN_FROM_PACKAGE"       = "https://${azurerm_storage_account.app.name}.blob.core.windows.net/${azurerm_storage_container.app.name}/${azurerm_storage_blob.app.name}${data.azurerm_storage_account_blob_container_sas.app.sas}"
   }
 
   site_config {
