@@ -11,18 +11,18 @@ resource "azurerm_storage_container" "app" {
 }
 
 resource "azurerm_storage_blob" "app" {
-  name                    = "${filesha256(var.archive_file.output_path)}.zip"
-  storage_account_name    = azurerm_storage_account.app.name
-  storage_container_name  = azurerm_storage_container.app.name
-  type                    = "Block"
-  source                  = var.archive_file.output_path
+  name                   = "${filesha256(data.archive_file.app.output_path)}.zip"
+  storage_account_name   = azurerm_storage_account.app.name
+  storage_container_name = azurerm_storage_container.app.name
+  type                   = "Block"
+  source                 = data.archive_file.app.output_path
 }
 
 data "azurerm_storage_account_blob_container_sas" "app" {
   connection_string = azurerm_storage_account.app.primary_connection_string
   container_name    = azurerm_storage_container.app.name
 
-  start = "2022-01-01T00:00:00Z"
+  start  = "2022-01-01T00:00:00Z"
   expiry = "2032-01-01T00:00:00Z"
 
   permissions {
