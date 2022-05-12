@@ -33,19 +33,27 @@ jobs:
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
+        with:
+          tf_actions_working_dir: './terraform'
 
       - name: Terraform Init
         id: init
         run: terraform init
+        with:
+          tf_actions_working_dir: './terraform'
       
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
+        with:
+          tf_actions_working_dir: './terraform'
 
       - name: Terraform Plan
         id: plan
         if: github.event_name == 'pull_request'
         run: terraform plan -no-color -input=false
+        with:
+          tf_actions_working_dir: './terraform'
         continue-on-error: true
 
       - uses: actions/github-script@v6
@@ -54,6 +62,7 @@ jobs:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          tf_actions_working_dir: './terraform'
           script: |
             const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
@@ -86,7 +95,10 @@ jobs:
         run: exit 0
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false -var "app_name=${{ env.AZURE_FUNCTIONAPP_NAME }}"
+        run: terraform apply -auto-approve -input=false
+        with:
+          args: '-var="app_name=${{ env.AZURE_FUNCTIONAPP_NAME }}"'
+          tf_actions_working_dir: './terraform'
 
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-github-actions?tabs=python
       - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
@@ -101,6 +113,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt --target=".python_packages/lib/site-packages"
           popd
+
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
