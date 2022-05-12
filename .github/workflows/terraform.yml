@@ -33,27 +33,23 @@ jobs:
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
-        with:
-          tf_actions_working_dir: './terraform'
+        working-directory: ./terraform
 
       - name: Terraform Init
         id: init
         run: terraform init
-        with:
-          tf_actions_working_dir: './terraform'
+        working-directory: ./terraform
       
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
-        with:
-          tf_actions_working_dir: './terraform'
+        working-directory: ./terraform
 
       - name: Terraform Plan
         id: plan
         if: github.event_name == 'pull_request'
         run: terraform plan -no-color -input=false
-        with:
-          tf_actions_working_dir: './terraform'
+        working-directory: ./terraform
         continue-on-error: true
 
       - uses: actions/github-script@v6
@@ -98,7 +94,7 @@ jobs:
         run: terraform apply -auto-approve -input=false
         with:
           args: '-var="app_name=${{ env.AZURE_FUNCTIONAPP_NAME }}"'
-          tf_actions_working_dir: './terraform'
+        working-directory: ./terraform
 
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-github-actions?tabs=python
       - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
