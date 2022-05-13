@@ -29,4 +29,4 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
     logging.info(f'{fn} adding subscription: {entity}')
     upsert_location(entity)
     await client.raise_event(instance_id, 'ConfirmSubscriptionEvent')
-    return func.HttpResponse('Success! you are subcribed')
+    return func.HttpResponse('Success! you are subscribed')
