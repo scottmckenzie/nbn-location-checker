@@ -36,7 +36,7 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
     
     # return 400 if connect via FTTP or HFC
     if data.get('techType') == 'FTTP' or data.get('techType') == 'HFC':
-        message = f'{location} connected via data.get("techType")'
+        message = f'{location} connected via {data.get("techType")}'
         logging.info(f'{fn} {message}')
         return http_response(400, message)
 
@@ -51,5 +51,5 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
     data['url'] = req.url
     client = df.DurableOrchestrationClient(starter)
     instance_id = await client.start_new("EmailVerificationOrchestrator", None, data)
-    logging.info(f"{fn} Started orchestration with ID '{instance_id}'")
-    return func.HttpResponse(f"Check your email for more info.")
+    logging.info(f'{fn} Started orchestration with ID {instance_id}')
+    return func.HttpResponse('Check your email for more info.')
