@@ -4,6 +4,7 @@ resource "azurerm_service_plan" "app" {
   resource_group_name = azurerm_resource_group.rg.name
   os_type             = "Linux"
   sku_name            = "Y1"
+  tags                = {}
 }
 
 resource "azurerm_storage_account" "app" {
@@ -12,6 +13,7 @@ resource "azurerm_storage_account" "app" {
   resource_group_name      = azurerm_resource_group.rg.name
   account_replication_type = "LRS"
   account_tier             = "Standard"
+  tags                     = {}
 }
 
 resource "azurerm_application_insights" "app" {
@@ -19,6 +21,7 @@ resource "azurerm_application_insights" "app" {
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
+  tags                = {}
 }
 
 resource "azurerm_linux_function_app" "app" {
@@ -45,4 +48,6 @@ resource "azurerm_linux_function_app" "app" {
     ftps_state                             = "Disabled"
     http2_enabled                          = true
   }
+
+  tags = {}
 }

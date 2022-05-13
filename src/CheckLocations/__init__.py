@@ -7,7 +7,6 @@ from shared_code.table import AzureTableClient
 
 # check all locations in table
 # if they have a subscriber add them to the queue
-#      "schedule": "0 5 12 * * *"
 def main(mytimer: func.TimerRequest, msg: func.Out[typing.List[str]]) -> None:
     fn = '[CheckLocations.timerTrigger]'
 
