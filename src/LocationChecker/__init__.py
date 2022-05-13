@@ -12,7 +12,7 @@ def main(msg: func.QueueMessage, message: func.Out[str]) -> None:
     msg = msg.get_body().decode('utf-8')
     logging.info(f'{fn} Processing queue item: {msg}')
     # convert json msg string to a dict
-    then = json.loads(msg.get_body().decode('utf-8'))
+    then = json.loads(msg)
     now = get_location_from_nbn_api(then['PartitionKey'])
     # has altReasonCode code changed?
     if now.get('altReasonCode') != then.get('altReasonCode'):
