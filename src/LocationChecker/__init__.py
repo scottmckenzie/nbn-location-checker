@@ -16,8 +16,8 @@ def main(msg: func.QueueMessage, message: func.Out[str]) -> None:
     now = get_location_from_nbn_api(then['PartitionKey'])
     # has altReasonCode code changed?
     if now.get('altReasonCode') != then.get('altReasonCode'):
-        logging.info(f"{fn} Location {now['PartitionKey']} has changed " +
-            f"from {then.get('altReasonCode')} to {now.get('altReasonCode')}")
+        logging.info(f'{fn} Location {now["PartitionKey"]} has changed ' +
+            f'from {then.get("altReasonCode")} to {now.get("altReasonCode")}')
         subject = get_nbn_status(now['altReasonCode'])
         message.set(get_email_message(subject, now))
         upsert_location(now)
