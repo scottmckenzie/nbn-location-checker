@@ -2,6 +2,11 @@
 # REQUIRED VARIABLES
 #########################################################################################
 
+variable "app_name" {
+  type        = string
+  description = "The application name"
+}
+
 variable "sendgrid_api_key" {
   type        = string
   description = "SendGrid API key"
@@ -12,12 +17,6 @@ variable "sendgrid_api_key" {
 #########################################################################################
 # OPTIONAL VARIABLES (sane defaults)
 #########################################################################################
-
-variable "app_name" {
-  type        = string
-  description = "The application name"
-  default     = "nbn-address-checker"
-}
 
 variable "environment" {
   type        = string

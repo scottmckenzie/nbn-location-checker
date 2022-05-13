@@ -5,6 +5,8 @@ from datetime import timedelta
 
 
 def orchestrator_function(context: df.DurableOrchestrationContext):
+    fn = '[EmailVerificationOrchestrator]'
+    
     input = context.get_input()
     # add instance_id to input dict so SendSubscriptionEmail activity has access to it
     input['instance_id'] = context.instance_id
@@ -20,7 +22,9 @@ def orchestrator_function(context: df.DurableOrchestrationContext):
     confirmation_task = context.wait_for_external_event("ConfirmSubscriptionEvent")
     winner = yield context.task_any([confirmation_task, timeout_task])
     if (winner == confirmation_task):
-        logging.info('subscription confirmed')
+        logging.info(f'{fn} {context.instance_id} subscription confirmed')
+    else:
+        logging.info(f'{fn} {context.instance_id} subscription timed out')
     if not timeout_task.is_completed:
         # All pending timers must be complete or canceled before the function exits.
         timeout_task.cancel()

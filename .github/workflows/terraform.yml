@@ -17,7 +17,7 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
       AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src'
-      AZURE_FUNCTIONAPP_NAME: 'nbn-address-checker'
+      AZURE_FUNCTIONAPP_NAME: ${{ github.event.repository.name }}
       PYTHON_VERSION: '3.9'
 
     steps:
@@ -26,9 +26,6 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
-        with:
-          # terraform_version: 0.13.0:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Format
         id: fmt
@@ -48,7 +45,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         if: github.event_name == 'pull_request'
-        run: terraform plan -no-color -input=false
+        run: terraform plan -no-color -input=false -var="app_name=${{ env.AZURE_FUNCTIONAPP_NAME }}" -var="sendgrid_api_key=${{ secrets.SENDGRID_API_KEY }}"
         working-directory: ./terraform
         continue-on-error: true
 
@@ -58,7 +55,6 @@ jobs:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          tf_actions_working_dir: './terraform'
           script: |
             const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
@@ -86,17 +82,15 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
-      - name: Exit if not a push to main
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: exit 0
-
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-github-actions?tabs=python
       - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: actions/setup-python@v1
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: 'Resolve Project Dependencies Using Pip'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         shell: bash
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
@@ -105,5 +99,6 @@ jobs:
           popd
 
       - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false -var="app_name=${{ env.AZURE_FUNCTIONAPP_NAME }}" -var="sendgrid_api_key=${{ secrets.SENDGRID_API_KEY }}"
         working-directory: ./terraform
