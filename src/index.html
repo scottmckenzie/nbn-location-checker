@@ -1,11 +1,11 @@
 <!doctype html>
 <html>
     <body>
-        <form action="/api/subscribe">
+        <form method="POST">
         <label for="location">NBN Location ID:</label><br>
-        <input type="text" id="location" name="location"><br>
+        <input name="location" type="text" required="required" pattern="LOC\d{12}" placeholder="LOC000178376736"><br>
         <label for="email">Email address:</label><br>
-        <input type="text" id="email" name="email" ><br><br>
+        <input name="email" type="email" required="required"><br><br>
         <input type="submit" value="Submit">
         </form> 
     </body>
