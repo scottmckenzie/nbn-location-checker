@@ -49,12 +49,6 @@ resource "azurerm_linux_function_app" "app" {
     http2_enabled                          = true
   }
 
-  tags = {
-    "hidden-link: /app-insights-conn-string"         = "placeholder"
-    "hidden-link: /app-insights-instrumentation-key" = "placeholder"
-    "hidden-link: /app-insights-resource-id"         = "placeholder"
-  }
-
   lifecycle {
     ignore_changes = [
       tags["hidden-link: /app-insights-conn-string"],
