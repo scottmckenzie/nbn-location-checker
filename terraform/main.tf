@@ -1,4 +1,5 @@
 locals {
+  ai_name              = format("appi-%s-01", var.app_name)
   app_insights_name    = format("appi-%s", var.app_name)
   function_app_name    = format("func-%s", var.app_name)
   plan_name            = format("plan-%s", var.app_name)

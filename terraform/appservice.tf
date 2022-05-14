@@ -24,6 +24,14 @@ resource "azurerm_application_insights" "app" {
   tags                = {}
 }
 
+resource "azurerm_application_insights" "ai01" {
+  name                = local.ai_name
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  application_type    = "web"
+  tags                = {}
+}
+
 resource "azurerm_linux_function_app" "app" {
   name                       = local.function_app_name
   location                   = var.location
@@ -43,8 +51,7 @@ resource "azurerm_linux_function_app" "app" {
     application_stack {
       python_version = "3.9"
     }
-    application_insights_connection_string = azurerm_application_insights.app.connection_string
-    application_insights_key               = azurerm_application_insights.app.instrumentation_key
+    application_insights_connection_string = azurerm_application_insights.ai01.connection_string
     ftps_state                             = "Disabled"
     http2_enabled                          = true
   }
