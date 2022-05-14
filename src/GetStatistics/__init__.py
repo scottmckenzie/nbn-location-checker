@@ -21,8 +21,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             # iterate over all subscribers to this location
             for subscriber in table.query_entities(filter):
                 subscriptions += 1
-                if subscriber not in subscribers:
-                    subscribers.append(subscriber)
+                if subscriber['RowKey'] not in subscribers:
+                    subscribers.append(subscriber['RowKey'])
     data = {
         'locations': locations,
         'subscribers': len(subscribers),
