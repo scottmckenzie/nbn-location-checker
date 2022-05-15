@@ -29,9 +29,9 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
     # return 404 for invalid location
     data = get_location_and_store(location)
     if data is None:
-        message = f'{location} not found'
+        message = f'Location {location} not found'
         logging.info(f'{fn} {message}')
-        return http_response(404)
+        return http_response(404, message)
     
     # return 400 if connected via FTTB, FTTP, HFC
     if data.get('techType') in ['FTTB', 'FTTP', 'HFC']:
