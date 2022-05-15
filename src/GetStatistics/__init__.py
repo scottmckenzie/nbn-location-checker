@@ -1,6 +1,7 @@
 import azure.functions as func
 import json
 import logging
+import mimetypes
 from shared_code.table import AzureTableClient
 
 
@@ -28,4 +29,5 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         'subscribers': len(subscribers),
         'subscriptions': subscriptions
     }
-    return func.HttpResponse(json.dumps(data))
+    mimetype = mimetypes.types_map['.json']
+    return func.HttpResponse(json.dumps(data), mimetype=mimetype)
