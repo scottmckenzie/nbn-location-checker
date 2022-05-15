@@ -19,7 +19,8 @@ def http_response(status_code: int, message: str = None):
     return func.HttpResponse(body, status_code=status_code, mimetype=mimetype)
 
 def valid_email(email: str) -> bool:
-    pattern = '([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+'
+    # from https://www.emailregex.com/
+    pattern = '(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'
     if re.fullmatch(pattern, email):
         return True
     return False
