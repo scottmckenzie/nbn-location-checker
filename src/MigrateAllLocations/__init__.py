@@ -4,7 +4,7 @@ import typing
 from shared_code.table import AzureTableClient
 
 
-def main(msg: func.QueueMessage, msg_out: func.Out[typing.List[str]]) -> None:
+def main(msg: func.QueueMessage, msgout: func.Out[typing.List[str]]) -> None:
     fn = "'Function.MigrateAllLocations'"
     logging.info(f'{fn} queue trigger function processed a queue item: %s',
                  msg.get_body().decode('utf-8'))
@@ -17,7 +17,7 @@ def main(msg: func.QueueMessage, msg_out: func.Out[typing.List[str]]) -> None:
         for location in table.query_entities(filter):
             messages.append(location['PartitionKey'])
     if messages:
-        msg.set(messages)
+        msgout.set(messages)
         logging.info(f'{fn} Added {len(messages)} message(s) to the queue')
     else:
         logging.info(f'{fn} No messages add to the queue')
