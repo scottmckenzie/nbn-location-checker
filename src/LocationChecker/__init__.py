@@ -19,10 +19,11 @@ def main(msg: func.QueueMessage, message: func.Out[str]) -> None:
         logging.info(f'{fn} Location {now["PartitionKey"]} has changed ' +
             f'from {then.get("altReasonCode")} to {now.get("altReasonCode")}')
         subject = get_nbn_status(now['altReasonCode'])
-        message.set(get_email_message(subject, now))
+        for email in then['subscribers']:
+            message.set(get_email_message(email, subject, now))
         upsert_location(now)
 
-def get_email_message(subject, location):
+def get_email_message(email, subject, location):
     value = f"""Hi
 
 You have signed up to receive NBN updates for the following location:
@@ -36,7 +37,7 @@ https://www.nbnco.com.au/connect-home-or-business/check-your-address"""
     msg = {
         "personalizations": [ {
           "to": [{
-            "email": input['email']
+            "email": email
             }]}],
         "subject": subject,
         "content": [{
