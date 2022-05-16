@@ -3,5 +3,11 @@
   "extensionBundle": {
     "id": "Microsoft.Azure.Functions.ExtensionBundle",
     "version": "[2.*, 3.0.0)"
+  },
+  "extensions": {
+    "queues": {
+      "batchSize": 1,
+      "maxDequeueCount": 3
+    }
   }
 }
