@@ -11,9 +11,10 @@ resource "azurerm_storage_container" "app" {
 }
 
 resource "azurerm_storage_blob" "app" {
-  name                   = "${filesha256(data.archive_file.app.output_path)}.zip"
+  name                   = "function-app.zip"
   storage_account_name   = azurerm_storage_account.app.name
   storage_container_name = azurerm_storage_container.app.name
+  content_md5            = data.archive_file.app.output_md5
   type                   = "Block"
   source                 = data.archive_file.app.output_path
 }
