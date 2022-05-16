@@ -16,7 +16,7 @@ resource "azurerm_cosmosdb_account" "db" {
 }
 
 resource "azurerm_cosmosdb_sql_database" "db" {
-  name                = local.database_name
+  name                = local.cosmos_db_name
   resource_group_name = azurerm_resource_group.rg.name
   account_name        = azurerm_cosmosdb_account.db.name
   throughput          = 1000
