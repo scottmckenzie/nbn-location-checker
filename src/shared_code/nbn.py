@@ -50,7 +50,7 @@ def get_nbn_status(code: str) -> str:
 
 def get_location(location_id: str):
     fn = '[get_location]'
-    url = f'https://places.nbnco.net.au/places/v2/details/{location}'
+    url = f'https://places.nbnco.net.au/places/v2/details/{location_id}'
     headers = {'referer': 'https://www.nbnco.com.au/'}
     logging.info(f'{fn} requesting location {location_id}')
     response = requests.get(url=url, headers=headers)
