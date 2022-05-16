@@ -16,14 +16,6 @@ resource "azurerm_storage_account" "app" {
   tags                     = {}
 }
 
-resource "azurerm_application_insights" "app" {
-  name                = local.app_insights_name
-  location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
-  application_type    = "web"
-  tags                = {}
-}
-
 resource "azurerm_application_insights" "ai01" {
   name                = local.ai_name
   location            = var.location
@@ -36,6 +28,7 @@ resource "azurerm_linux_function_app" "app" {
   name                       = local.function_app_name
   location                   = var.location
   resource_group_name        = azurerm_resource_group.rg.name
+  builtin_logging_enabled    = false
   https_only                 = true
   service_plan_id            = azurerm_service_plan.app.id
   storage_account_name       = azurerm_storage_account.app.name
