@@ -39,7 +39,7 @@ resource "azurerm_cosmosdb_sql_container" "subs" {
   resource_group_name = azurerm_resource_group.rg.name
   account_name        = azurerm_cosmosdb_account.db.name
   database_name       = azurerm_cosmosdb_sql_database.db.name
-  partition_key_path  = "/csaId"
+  partition_key_path  = "/csa_id"
 
   unique_key {
     paths = ["/location_id", "/email"]
