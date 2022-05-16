@@ -35,9 +35,10 @@ resource "azurerm_linux_function_app" "app" {
   storage_account_access_key = azurerm_storage_account.app.primary_access_key
 
   app_settings = {
-    "AzureWebJobsSendGridApiKey" = "${var.sendgrid_api_key}"
-    "FUNCTIONS_WORKER_RUNTIME"   = "python"
-    "WEBSITE_RUN_FROM_PACKAGE"   = "https://${azurerm_storage_account.app.name}.blob.core.windows.net/${azurerm_storage_container.app.name}/${azurerm_storage_blob.app.name}${data.azurerm_storage_account_blob_container_sas.app.sas}"
+    "AzureCosmosDBConnectionString" = "${azurerm_cosmosdb_account.db.connection_strings[0]}"
+    "AzureWebJobsSendGridApiKey"    = "${var.sendgrid_api_key}"
+    "FUNCTIONS_WORKER_RUNTIME"      = "python"
+    "WEBSITE_RUN_FROM_PACKAGE"      = "https://${azurerm_storage_account.app.name}.blob.core.windows.net/${azurerm_storage_container.app.name}/${azurerm_storage_blob.app.name}${data.azurerm_storage_account_blob_container_sas.app.sas}"
   }
 
   site_config {
