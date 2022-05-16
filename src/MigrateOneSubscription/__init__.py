@@ -14,4 +14,5 @@ def main(msg: func.QueueMessage, doc: func.Out[func.Document]) -> None:
         msg = f'{functionName} CSA not found for {sub["location_id"]}'
         logging.error(msg)
         return
+    sub['csa_id'] = csa_id
     doc.set(func.Document.from_dict(sub))
