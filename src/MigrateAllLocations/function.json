@@ -1,0 +1,19 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "name": "msg",
+      "type": "queueTrigger",
+      "direction": "in",
+      "queueName": "start-data-migration",
+      "connection": "AzureWebJobsStorage"
+    },
+    {
+      "type": "queue",
+      "direction": "out",
+      "name": "msg_out",
+      "queueName": "migrate-location",
+      "connection": "AzureWebJobsStorage"
+    }
+  ]
+}
