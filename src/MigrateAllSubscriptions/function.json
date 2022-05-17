@@ -5,14 +5,14 @@
       "name": "msg",
       "type": "queueTrigger",
       "direction": "in",
-      "queueName": "start-location-migration",
+      "queueName": "start-subscription-migration",
       "connection": "AzureWebJobsStorage"
     },
     {
       "type": "queue",
       "direction": "out",
       "name": "msgout",
-      "queueName": "migrate-location",
+      "queueName": "migrate-subscription",
       "connection": "AzureWebJobsStorage"
     }
   ]
