@@ -11,17 +11,22 @@ def get_location_and_store(location: str):
     return entity
 
 # get location from NBN API
-def get_location(location_id: str):
-    fn = '[get_location]'
-    url = f'https://places.nbnco.net.au/places/v2/details/{location}'
+def get_location(location_id: str) -> dict:
+    functionName = "'nbn.get_location'"
+    url = f'https://places.nbnco.net.au/places/v2/details/{location_id}'
     headers = {'referer': 'https://www.nbnco.com.au/'}
-    logging.info(f'{fn} requesting location {location_id}')
-    response = requests.get(url=url, headers=headers)
+    logging.info(f'{functionName} requesting location {location_id}')
+    response = requests.get(url, headers=headers)
     if not response.ok:
-        logging.error(f'{fn} request for {location_id} returned HTTP ' +
-            f'status {response.status_code}')
+        logging.error(f'{functionName} request for {location_id} returned ' +
+            f'HTTP status {response.status_code}')
         return None
-    return response.json()
+    location = response.json()
+    # configure for cosmos db
+    location.pop('timestamp')
+    location['csa_id'] = location['servingArea']['csaId']
+    location['id'] = location['addressDetail']['id']
+    return location
 
 def get_location_from_nbn_api(location: str):
     fn = '[get_location_from_nbn_api]'
@@ -47,18 +52,6 @@ def get_nbn_status(code: str) -> str:
         return 'Good news! You may be able to upgrade to FTTP'
     logging.error(f'{fn} Unknown code {code}')
     return 'Unknown status code :('
-
-def get_location(location_id: str):
-    fn = '[get_location]'
-    url = f'https://places.nbnco.net.au/places/v2/details/{location_id}'
-    headers = {'referer': 'https://www.nbnco.com.au/'}
-    logging.info(f'{fn} requesting location {location_id}')
-    response = requests.get(url=url, headers=headers)
-    if not response.ok:
-        logging.error(f'{fn} request for {location_id} returned HTTP ' +
-            f'status {response.status_code}')
-        return None
-    return response.json()
 
 # store the location in the table
 def upsert_location(location):

@@ -7,15 +7,6 @@
       "direction": "in",
       "queueName": "migrate-location",
       "connection": "AzureWebJobsStorage"
-    },
-    {
-      "type": "cosmosDB",
-      "direction": "out",
-      "name": "doc",
-      "databaseName": "cosmos-nbn",
-      "collectionName": "locations",
-      "createIfNotExists": "true",
-      "connectionStringSetting": "AzureCosmosDBConnectionString"
     }
   ]
 }

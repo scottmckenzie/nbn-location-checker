@@ -27,11 +27,7 @@ resource "azurerm_cosmosdb_sql_container" "locations" {
   resource_group_name = azurerm_resource_group.rg.name
   account_name        = azurerm_cosmosdb_account.db.name
   database_name       = azurerm_cosmosdb_sql_database.db.name
-  partition_key_path  = "/servingArea/csaId"
-
-  unique_key {
-    paths = ["/addressDetail/id"]
-  }
+  partition_key_path  = "/csa_id"
 }
 
 resource "azurerm_cosmosdb_sql_container" "subs" {
@@ -39,9 +35,9 @@ resource "azurerm_cosmosdb_sql_container" "subs" {
   resource_group_name = azurerm_resource_group.rg.name
   account_name        = azurerm_cosmosdb_account.db.name
   database_name       = azurerm_cosmosdb_sql_database.db.name
-  partition_key_path  = "/csa_id"
+  partition_key_path  = "/id"
 
   unique_key {
-    paths = ["/location_id", "/email"]
+    paths = ["/email"]
   }
 }

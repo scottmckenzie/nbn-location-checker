@@ -1,14 +1,15 @@
 import azure.functions as func
 import logging
 from shared_code.nbn import get_location
+from shared_code.cosmos import upsert_location
 
 
-def main(msg: func.QueueMessage, doc: func.Out[func.Document]) -> None:
-    logging.info('Python queue trigger function processed a queue item: %s',
-                 msg.get_body().decode('utf-8'))
-    location_id = msg.get_body().decode('utf-8')
-    location = get_location(location_id)
+def main(msg: func.QueueMessage) -> None:
+    functionName = "'Functions.MigrateOneLocation'"
+    msg = msg.get_body().decode('utf-8')
+    logging.info(f'{functionName} queue trigger function processed a ' +
+                 f'queue item: {msg}')
+    location = get_location(msg)
     if not location:
         return
-    location.pop('timestamp')
-    doc.set(func.Document.from_dict(location))
+    upsert_location(location)
