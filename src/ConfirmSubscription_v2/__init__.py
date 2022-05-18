@@ -39,5 +39,6 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
     upsert_subscription(sub)
 
     # fire ConfirmSubscriptionEvent
-    await client.raise_event(instance_id, 'ConfirmSubscriptionEvent')
+    await client.raise_event(
+        instance_id, f'ConfirmSubscription_v{API_VERSION}')
     return func.HttpResponse('Success! you are subscribed')
