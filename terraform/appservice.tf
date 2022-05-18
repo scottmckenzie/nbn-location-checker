@@ -37,6 +37,7 @@ resource "azurerm_linux_function_app" "app" {
   app_settings = {
     "AzureCosmosDBConnectionString" = "${azurerm_cosmosdb_account.db.connection_strings[0]}"
     "AzureWebJobsSendGridApiKey"    = "${var.sendgrid_api_key}"
+    "CheckLocations_v2.Schedule"    = "0 5 11 * * *"
     "FUNCTIONS_WORKER_RUNTIME"      = "python"
     "WEBSITE_RUN_FROM_PACKAGE"      = "https://${azurerm_storage_account.app.name}.blob.core.windows.net/${azurerm_storage_container.app.name}/${azurerm_storage_blob.app.name}${data.azurerm_storage_account_blob_container_sas.app.sas}"
   }
@@ -55,11 +56,11 @@ resource "azurerm_linux_function_app" "app" {
       tags["hidden-link: /app-insights-conn-string"],
       tags["hidden-link: /app-insights-instrumentation-key"],
       tags["hidden-link: /app-insights-resource-id"],
-      tags["AzureWebJobs.CheckLocations.Disabled"],
-      tags["AzureWebJobs.CheckLocations_v2.Disabled"],
-      tags["AzureWebJobs.MigrateOneLocation.Disabled"],
-      tags["AzureWebJobs.MigrateOneSubscription.Disabled"],
-      tags["CheckLocations_v2.Schedule"],
+      app_settings["AzureWebJobs.CheckLocations.Disabled"],
+      app_settings["AzureWebJobs.CheckLocations_v2.Disabled"],
+      app_settings["AzureWebJobs.MigrateOneLocation.Disabled"],
+      app_settings["AzureWebJobs.MigrateOneSubscription.Disabled"],
+      app_settings["CheckLocations_v2.Schedule"],
     ]
   }
 }
