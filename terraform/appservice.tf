@@ -55,6 +55,11 @@ resource "azurerm_linux_function_app" "app" {
       tags["hidden-link: /app-insights-conn-string"],
       tags["hidden-link: /app-insights-instrumentation-key"],
       tags["hidden-link: /app-insights-resource-id"],
+      tags["AzureWebJobs.CheckLocations.Disabled"],
+      tags["AzureWebJobs.CheckLocations_v2.Disabled"],
+      tags["AzureWebJobs.MigrateOneLocation.Disabled"],
+      tags["AzureWebJobs.MigrateOneSubscription.Disabled"],
+      tags["CheckLocations_v2.Schedule"],
     ]
   }
 }
