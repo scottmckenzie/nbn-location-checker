@@ -10,7 +10,7 @@
         "get",
         "post"
       ],
-      "route": "v2/subscribe"
+      "route": "subscribe"
     },
     {
       "name": "starter",
