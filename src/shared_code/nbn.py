@@ -25,7 +25,7 @@ def get_location(location_id: str) -> dict:
     # configure for cosmos db
     location.pop('timestamp')
     location['csa_id'] = location['servingArea']['csaId']
-    location['id'] = location['addressDetail']['id']
+    location['id'] = location_id
     return location
 
 def get_location_from_nbn_api(location: str):
