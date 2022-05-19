@@ -2,7 +2,7 @@ import azure.durable_functions as df
 import azure.functions as func
 import json
 import logging
-from shared_code.cosmos import upsert_subscription
+import shared_code.cosmos as cosmos
 from shared_code.utils import http_response
 
 
@@ -32,11 +32,11 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
     # add subscription to the database
     input = json.loads(status.input_)
     sub = {
-        'id': input['location']['id'],
+        'id': input['location_id'],
         'email': input['email']
     }
     logging.info(f'{functionName} adding subscription: {sub}')
-    upsert_subscription(sub)
+    cosmos.upsert_subscription(sub)
 
     # fire ConfirmSubscriptionEvent
     await client.raise_event(
