@@ -4,10 +4,10 @@ from types import SimpleNamespace
 
 
 # initialise CosmosClient and containers
-_m = SimpleNamespace(db_id='cosmos-nbn')
+_m = SimpleNamespace()
 _m.client = CosmosClient.from_connection_string(
-    os.environ.get(u'AzureCosmosDBConnectionString'))
-_m.db = _m.client.get_database_client(_m.db_id)
+    os.getenv(u'AzureCosmosDBConnectionString'))
+_m.db = _m.client.get_database_client('cosmos-nbn')
 _m.locations = _m.db.get_container_client('locations')
 _m.subs = _m.db.get_container_client('subs')
 
