@@ -1,6 +1,7 @@
 import azure.durable_functions as df
 import azure.functions as func
 import logging
+import shared_code.cosmos as cosmos
 from shared_code.nbn import get_location, valid_location
 from shared_code.utils import http_response, valid_email
 from urllib.parse import parse_qs
@@ -36,6 +37,7 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
         message = f'Location {location_id} not found'
         logging.info(f'{functionName} {message}')
         return http_response(404, message)
+    cosmos.upsert_location(location)
     
     # return 400 if connected via FTTB, FTTP, HFC
     if location.get('techType') in ['FTTB', 'FTTP', 'HFC']:
@@ -43,7 +45,7 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
         logging.info(f'{functionName} {message}')
         return http_response(400, message)
     
-    # return 400 if already eligilbe for FTTP upgrade
+    # return 400 if already eligible for FTTP upgrade
     if location.get('patChangeStatus') == True:
         message = (f'{location_id} eligible for FTTP upgrade since ' +
                    f'{location.get("patChangeDate")}')

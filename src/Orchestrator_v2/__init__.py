@@ -9,19 +9,10 @@ def orchestrator_function(context: df.DurableOrchestrationContext):
     functionName = f"'Functions.Orchestrator_v{API_VERSION}'"
     
     input = context.get_input()
-    # add instance_id to input dict so SendSubscriptionEmail activity has 
-    # access
+    # add instance_id to dict so SendSubscriptionEmail activity has access
     input['instance_id'] = context.instance_id
 
-    # run these activities in parallel
-    tasks = []
-    tasks.append(context.call_activity(
-        f"InsertLocation_v{API_VERSION}", input['location']))
-    tasks.append(context.call_activity(
-        f"SendSubscriptionEmail_v{API_VERSION}", input))
-    yield context.task_all(tasks)
-    #yield context.call_activity(f"SendSubscriptionEmail_v{API_VERSION}", input)
-    #yield context.call_activity(f"InsertLocation_v{API_VERSION}", input['location'])
+    yield context.call_activity(f"SendSubscriptionEmail_v{API_VERSION}", input)
 
     # set up timeout task
     expiration = context.current_utc_datetime + timedelta(seconds=600)
