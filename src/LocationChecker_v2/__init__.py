@@ -1,7 +1,7 @@
 import azure.functions as func
 import json
 import logging
-from shared_code.nbn import get_location_from_nbn_api, get_nbn_status, upsert_location
+from shared_code import cosmos, nbn
 
 
 API_VERSION = 2
@@ -13,28 +13,38 @@ def main(msg: func.QueueMessage, message: func.Out[str]) -> None:
 
     msg = msg.get_body().decode('utf-8')
     logging.info(f'{functionName} Processing queue item: {msg}')
+    
     # convert json msg string to a dict
-    then = json.loads(msg)
-    now = get_location_from_nbn_api(then['PartitionKey'])
+    l1 = json.loads(msg)
+    l1altReason = l1['addressDetail']['altReasonCode']
+    location_id = l1['id']
+
+    l2 = nbn.get_location(location_id)
+    l2altReason = l2['addressDetail']['altReasonCode']
+    
     # has altReasonCode code changed?
-    if now.get('altReasonCode') != then.get('altReasonCode'):
-        logging.info(f'{functionName} Location {now["PartitionKey"]} has ' +
-                     f'changed from {then.get("altReasonCode")} to ' +
-                     f'{now.get("altReasonCode")}')
-        subject = get_nbn_status(now['altReasonCode'])
-        for email in then['subscribers']:
-            message.set(get_email_message(email, subject, now))
-        upsert_location(now)
+    if l1altReason == l2altReason:
+        return
+    logging.info(f'{functionName} Location {location_id} has changed from '
+        f'{l1altReason} to {l2altReason}')
+    
+    # construct email message(s)
+    subject = nbn.get_nbn_status(l2altReason)
+    for email in l1['subscribers']:
+        message.set(get_email_message(email, subject, l2))
+    
+    # save new location details
+    cosmos.upsert_location(l2)
 
 def get_email_message(email, subject, location):
     value = f"""Hi
 
-You have signed up to receive NBN updates for the following location:
-{location['formattedAddress']}
+You have signed up to receive updates for the following nbn location:
+{location['addressDetail']['formattedAddress']}
 
 {subject}
 
-Please check the NBN website for confirmation:
+Please check the nbn website for confirmation:
 https://www.nbnco.com.au/connect-home-or-business/check-your-address"""
 
     msg = {
