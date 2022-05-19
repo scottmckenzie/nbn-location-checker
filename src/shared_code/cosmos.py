@@ -1,56 +1,41 @@
 import os
 from azure.cosmos.cosmos_client import CosmosClient
-from azure.cosmos import ContainerProxy, DatabaseProxy
+from types import SimpleNamespace
 
 
-DATABASE_ID = 'cosmos-nbn'
-LOCATIONS = 'locations'
-SUBS = 'subs'
+# initialise CosmosClient and containers
+_m = SimpleNamespace(db_id='cosmos-nbn')
+_m.client = CosmosClient.from_connection_string(
+    os.environ.get(u'AzureCosmosDBConnectionString'))
+_m.db = _m.client.get_database_client(_m.db_id)
+_m.locations = _m.db.get_container_client('locations')
+_m.subs = _m.db.get_container_client('subs')
 
 def get_all_locations() -> list:
-    container = get_container_client(LOCATIONS)
-    return list(container.read_all_items())
+    return list(_m.locations.read_all_items())
     
-def get_container_client(container: str) -> ContainerProxy:
-    conn_str = os.environ.get(u'AzureCosmosDBConnectionString')
-    client = CosmosClient.from_connection_string(conn_str)
-    db = client.get_database_client(DATABASE_ID)
-    return db.get_container_client(container)
-
-def get_database_client() -> DatabaseProxy:
-    conn_str = os.environ.get(u'AzureCosmosDBConnectionString')
-    client = CosmosClient.from_connection_string(conn_str)
-    return client.get_database_client(DATABASE_ID)
-
-def get_location_count(database: DatabaseProxy) -> int:
-    container = database.get_container_client(LOCATIONS)
+def get_location_count() -> int:
     query = 'SELECT VALUE COUNT(1) FROM c'
     return next(
-        container.query_items(query, enable_cross_partition_query=True))
+        _m.locations.query_items(query, enable_cross_partition_query=True))
 
 def get_location_subscribers(location_id: str) -> list:
-    container = get_container_client(SUBS)
     query = f'SELECT * from c WHERE c.id = "{location_id}"'
-    return list(container.query_items(query))
+    return list(_m.subs.query_items(query))
 
-def get_subscriber_count(database: DatabaseProxy) -> int:
-    container = database.get_container_client(SUBS)
+def get_subscriber_count() -> int:
     query = 'SELECT DISTINCT VALUE c.email FROM c'
     subscribers = list(
-        container.query_items(query, enable_cross_partition_query=True))
+        _m.subs.query_items(query, enable_cross_partition_query=True))
     return len(subscribers)
 
-def get_subscription_count(database: DatabaseProxy) -> int:
-    container = database.get_container_client(SUBS)
+def get_subscription_count() -> int:
     query = 'SELECT VALUE COUNT(1) FROM c'
     return next(
-        container.query_items(query, enable_cross_partition_query=True))
+        _m.subs.query_items(query, enable_cross_partition_query=True))
 
 def upsert_location(location: dict) -> None:
-    container = get_container_client(LOCATIONS)
-    response = container.upsert_item(location)
-
+    _m.locations.upsert_item(location)
 
 def upsert_subscription(sub: dict) -> None:
-    container = get_container_client(SUBS)
-    response = container.upsert_item(sub)
+    _m.subs.upsert_item(sub)
