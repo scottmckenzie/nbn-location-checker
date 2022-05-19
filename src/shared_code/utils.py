@@ -1,7 +1,12 @@
 import azure.functions as func
 import mimetypes
 import re
+from types import SimpleNamespace
 
+
+_m = SimpleNamespace()
+# from https://www.emailregex.com/
+_m.pattern = re.compile('(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)')
 
 def get_html_file(filename: str) -> str:
     with open(filename) as f:
@@ -19,8 +24,6 @@ def http_response(status_code: int, message: str = None):
     return func.HttpResponse(body, status_code=status_code, mimetype=mimetype)
 
 def valid_email(email: str) -> bool:
-    # from https://www.emailregex.com/
-    pattern = '(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'
-    if re.fullmatch(pattern, email):
+    if re.fullmatch(_m.pattern, email):
         return True
     return False
