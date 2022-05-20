@@ -1,14 +1,36 @@
+import aiohttp
 import logging
 import re
 import requests
+from types import SimpleNamespace
 from .table import AzureTableClient
 
 
-def get_location_and_store(location: str):
-    entity = get_location_from_nbn_api(location)
-    if entity:
-        upsert_location(entity)
-    return entity
+_m = SimpleNamespace()
+# compile regular expression
+_m.pattern = re.compile('^LOC\d{12}$')
+# initialise ClientSession
+_m.session = aiohttp.ClientSession(
+    base_url='https://places.nbnco.net.au',
+    headers={'referer': 'https://www.nbnco.com.au/'})
+
+# get location from NBN API
+async def get_location_async(location_id: str) -> dict:
+    functionName = "'nbn.get_location_async'"
+    logging.info(f'{functionName} Requesting location {location_id}')
+    location = None
+    async with _m.session.get(f'/places/v2/details/{location_id}') as resp:
+        if resp.ok:
+            location = await(resp.json())
+        else:
+            logging.error(f'{functionName} Request for {location_id} ' +
+                f'returned HTTP status {resp.status}')
+    if location:
+        # configure for cosmos db
+        location.pop('timestamp')
+        location['csa_id'] = location['servingArea']['csaId']
+        location['id'] = location_id
+    return location
 
 # get location from NBN API
 def get_location(location_id: str) -> dict:
@@ -58,7 +80,7 @@ def upsert_location(location):
     with AzureTableClient.get() as table:
         table.upsert_entity(location)
 
-def valid_location(location: str) -> bool:
-    if re.fullmatch('LOC\d{12}', location):
+def valid_location(location_id: str) -> bool:
+    if re.fullmatch(_m.pattern, location_id):
         return True
     return False
