@@ -69,6 +69,7 @@ resource "azurerm_linux_function_app" "app" {
       app_settings["AzureWebJobs.MigrateOneSubscription.Disabled"],
       app_settings["AzureWebJobs.ProcessSubscriptions_v2.Disabled"],
       app_settings["CheckLocations_v2.Schedule"],
+      app_settings["ProcessSubscriptions_v2.QueueName"],
       app_settings["ProcessSubscriptions_v2.Schedule"],
     ]
   }

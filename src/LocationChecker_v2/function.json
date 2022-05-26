@@ -5,7 +5,7 @@
       "name": "msg",
       "type": "queueTrigger",
       "direction": "in",
-      "queueName": "location-check-v2",
+      "queueName": "%ProcessSubscriptions_v2.QueueName%",
       "connection": "AzureWebJobsStorage"
     },
     {

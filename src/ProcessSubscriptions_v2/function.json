@@ -11,7 +11,7 @@
       "type": "queue",
       "direction": "out",
       "name": "msg",
-      "queueName": "subscription-check-v2",
+      "queueName": "%ProcessSubscriptions_v2.QueueName%",
       "connection": "AzureWebJobsStorage"
     }
   ]
