@@ -59,6 +59,7 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
     durable_input = {
         'csa_id': location['csa_id'],
         'email': email,
+        'formattedAddress': location['addressDetail']['formattedAddress'],
         'location_id': location_id,
         'url': req.url,
     }
