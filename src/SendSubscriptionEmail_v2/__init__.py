@@ -7,7 +7,7 @@ API_VERSION = 2
 
 def main(input, message) -> bool:
     functionName = f"'Functions.SendSubscriptionEmail_v{API_VERSION}'"
-    instance_id = input["instance_id"]
+    instance_id = input['instance_id']
     
     logging.info(
         f'{functionName} Sending email for instance {instance_id}')
