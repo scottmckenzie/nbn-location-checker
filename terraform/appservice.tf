@@ -65,6 +65,7 @@ resource "azurerm_linux_function_app" "app" {
       tags["hidden-link: /app-insights-resource-id"],
       app_settings["AzureWebJobs.CheckLocations.Disabled"],
       app_settings["AzureWebJobs.CheckLocations_v2.Disabled"],
+      app_settings["AzureWebJobs.LocationChecker_v2.Disabled"],
       app_settings["AzureWebJobs.MigrateOneLocation.Disabled"],
       app_settings["AzureWebJobs.MigrateOneSubscription.Disabled"],
       app_settings["AzureWebJobs.ProcessSubscriptions_v2.Disabled"],
