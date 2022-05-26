@@ -29,13 +29,20 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
             f'{functionName} Instance_id {instance_id} is not running')
         return http_response(status_code=404, message=message)
     
-    # add subscription to the database
     input = json.loads(status.input_)
-    sub = {
-        'id': input['location_id'],
-        'email': input['email']
-    }
-    logging.info(f'{functionName} adding subscription: {sub}')
+    email = input['email']
+    location_id = input['location_id']
+    sub = cosmos.get_subscription(location_id)
+    if sub and email not in sub['subscribers']:
+        sub['subscribers'].append(email)
+        logging.info(f'{functionName} Updating subscription: {sub}')
+    else:
+        sub = {
+            'csa_id': input['csa_id'],
+            'id': location_id,
+            'subscribers': (email)
+        }
+        logging.info(f'{functionName} Adding subscription: {sub}')
     cosmos.upsert_subscription(sub)
 
     # fire ConfirmSubscriptionEvent

@@ -15,9 +15,9 @@ def main(msg: func.QueueMessage, message: func.Out[str]) -> None:
     logging.info(f'{functionName} Processing queue item: {msg}')
     
     # convert json msg string to a dict
-    l1 = json.loads(msg)
-    l1altReason = l1['addressDetail']['altReasonCode']
-    location_id = l1['id']
+    sub = json.loads(msg)
+    location_id = sub['id']
+    l1altReason = cosmos.get_alt_reason_code(sub['csa_id'], location_id)
 
     l2 = nbn.get_location(location_id)
     l2altReason = l2['addressDetail']['altReasonCode']
@@ -30,7 +30,7 @@ def main(msg: func.QueueMessage, message: func.Out[str]) -> None:
     
     # construct email message(s)
     subject = nbn.get_nbn_status(l2altReason)
-    for email in l1['subscribers']:
+    for email in sub['subscribers']:
         message.set(get_email_message(email, subject, l2))
     
     # save new location details

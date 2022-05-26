@@ -57,10 +57,10 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
     
     # start durable function for email validation
     durable_input = {
-        "email": email,
-        "location_id": location_id,
-        "location": location,
-        "url": req.url,
+        'csa_id': location['csa_id'],
+        'email': email,
+        'location_id': location_id,
+        'url': req.url,
     }
     client = df.DurableOrchestrationClient(starter)
     instance_id = await client.start_new(
