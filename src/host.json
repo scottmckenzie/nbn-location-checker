@@ -6,7 +6,7 @@
   },
   "extensions": {
     "queues": {
-      "batchSize": 1,
+      "batchSize": 2,
       "maxDequeueCount": 3,
       "visibilityTimeout": "00:05:00"
     }
