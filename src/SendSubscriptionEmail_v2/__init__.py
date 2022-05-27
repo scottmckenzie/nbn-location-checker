@@ -14,11 +14,12 @@ def main(input, message) -> bool:
     url = get_url(input['url'], instance_id)
     value = f"""Hi
 
-You have signed up to receive NBN updates for the following location:
+You have signed up to receive nbn updates for the following location:
 {input['formattedAddress']}
 
-If this is correct please click here to confirm:
-{url}"""
+If this is correct, please click this link within 10 minutes to confirm:
+{url}
+"""
 
     msg = {
         "personalizations": [ {
