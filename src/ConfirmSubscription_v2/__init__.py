@@ -24,7 +24,7 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
     if not status:
         logging.warning(f'{functionName} Invalid instance_id: {instance_id}')
         return http_response(status_code=404, message=message)
-    if status.runtime_status.value != 'Running':
+    if status.runtime_status is not df.OrchestrationRuntimeStatus.Running:
         logging.warning(
             f'{functionName} Instance_id {instance_id} is not running')
         return http_response(status_code=404, message=message)
