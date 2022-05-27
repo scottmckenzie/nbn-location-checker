@@ -25,11 +25,9 @@ def orchestrator_function(context: df.DurableOrchestrationContext):
     if (winner == confirmation_task):
         logging.info(
             f'{functionName} {context.instance_id} subscription confirmed')
+        timeout_task.cancel()
     else:
         logging.info(
             f'{functionName} {context.instance_id} subscription timed out')
-    if not timeout_task.is_completed:
-        # All pending timers must be complete or canceled before the function exits.
-        timeout_task.cancel()
 
 main = df.Orchestrator.create(orchestrator_function)
