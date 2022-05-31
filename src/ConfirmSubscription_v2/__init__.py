@@ -44,7 +44,7 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
         sub = {
             'csa_id': input['csa_id'],
             'id': location_id,
-            'subscribers': (email)
+            'subscribers': [email]
         }
         logging.info(f'{functionName} Adding subscription: {sub}')
         cosmos.create_subscription(sub)
