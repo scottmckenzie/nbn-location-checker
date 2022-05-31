@@ -15,6 +15,9 @@ _m.subs = _m.db.get_container_client('subs')
 def create_subscription(subscription: dict) -> None:
     _m.subs.create_item(subscription)
 
+def delete_subscription(subscription: dict) -> None:
+    _m.subs.delete_item(subscription['id'], subscription['csa_id'])
+
 def get_all_locations() -> list:
     return list(_m.locations.read_all_items())
 
