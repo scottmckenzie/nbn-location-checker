@@ -22,20 +22,25 @@ async def main(msg: func.QueueMessage, message: func.Out[str]) -> None:
     l2 = await nbn.get_location_async(location_id)
     if l2 is None:
         raise Exception(f'Failed to get location {location_id}')
-    l2altReason = l2['addressDetail']['altReasonCode']
+    if l2['addressDetail']['techType'] == 'FTTP':
+        #TODO send email advising of upgrade and sub removal
+        # delete subscription
+        cosmos.delete_subscription(sub)
+    else:
+        l2altReason = l2['addressDetail']['altReasonCode']
+        
+        # has altReasonCode code changed?
+        if l1altReason == l2altReason:
+            return
+        logging.info(f'{functionName} Location {location_id} has changed from '
+            f'{l1altReason} to {l2altReason}')
+        
+        # construct email message(s)
+        subject = nbn.get_nbn_status(l2altReason)
+        for email in sub['subscribers']:
+            message.set(get_email_message(email, subject, l2))
     
-    # has altReasonCode code changed?
-    if l1altReason == l2altReason:
-        return
-    logging.info(f'{functionName} Location {location_id} has changed from '
-        f'{l1altReason} to {l2altReason}')
-    
-    # construct email message(s)
-    subject = nbn.get_nbn_status(l2altReason)
-    for email in sub['subscribers']:
-        message.set(get_email_message(email, subject, l2))
-    
-    # save new location details
+    # save updated location details
     cosmos.upsert_location(l2)
 
 def get_email_message(email, subject, location):
