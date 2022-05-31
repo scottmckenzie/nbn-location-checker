@@ -23,11 +23,6 @@ def orchestrator_function(context: df.DurableOrchestrationContext):
         f"ConfirmSubscriptionEvent_v{API_VERSION}")
     winner = yield context.task_any([confirmation_task, timeout_task])
     if (winner == confirmation_task):
-        logging.info(
-            f'{functionName} {context.instance_id} subscription confirmed')
         timeout_task.cancel()
-    else:
-        logging.info(
-            f'{functionName} {context.instance_id} subscription timed out')
 
 main = df.Orchestrator.create(orchestrator_function)
