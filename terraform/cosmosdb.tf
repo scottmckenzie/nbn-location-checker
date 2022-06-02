@@ -41,3 +41,11 @@ resource "azurerm_cosmosdb_sql_container" "subs" {
     paths = ["/email"]
   }
 }
+
+resource "azurerm_cosmosdb_sql_container" "stats" {
+  name                = "stats"
+  resource_group_name = azurerm_resource_group.rg.name
+  account_name        = azurerm_cosmosdb_account.db.name
+  database_name       = azurerm_cosmosdb_sql_database.db.name
+  partition_key_path  = "/id"
+}
