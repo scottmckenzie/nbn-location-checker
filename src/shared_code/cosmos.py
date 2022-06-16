@@ -75,7 +75,7 @@ def get_subscriptions() -> list:
     query = 'SELECT c.id, c.csa_id, c.subscribers FROM c'
     return list(_m.subs.query_items(query, enable_cross_partition_query=True))
 
-def replce_subscription(subscription: dict) -> None:
+def replace_subscription(subscription: dict) -> None:
     _m.subs.replace_item(subscription['id'], subscription)
 
 def upsert_location(location: dict) -> None:
