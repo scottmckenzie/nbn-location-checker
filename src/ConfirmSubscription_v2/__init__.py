@@ -30,6 +30,7 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
         return http_response(status_code=404, message=message)
     
     # add subscription
+    message = 'Success! you are subscribed'
     input = json.loads(status.input_)
     email = input['email']
     location_id = input['location_id']
@@ -38,7 +39,9 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
         # add email address to existing subscription
         sub['subscribers'].append(email)
         logging.info(f'{functionName} Updating subscription: {sub}')
-        cosmos.replce_subscription(sub)
+        cosmos.replace_subscription(sub)
+    elif sub and email in sub['subscribers']:
+        message = 'You are already subscribed to this location'
     else:
         # add new subscription
         sub = {
@@ -52,4 +55,4 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
     # fire ConfirmSubscriptionEvent
     await client.raise_event(
         instance_id, f'ConfirmSubscriptionEvent_v{API_VERSION}')
-    return func.HttpResponse('Success! you are subscribed')
+    return func.HttpResponse(message)
