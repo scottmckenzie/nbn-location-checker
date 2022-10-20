@@ -19,12 +19,15 @@ async def get_location_async(location_id: str) -> dict:
     functionName = "'nbn.get_location_async'"
     logging.info(f'{functionName} Requesting location {location_id}')
     location = None
-    async with _m.session.get(f'/places/v2/details/{location_id}') as resp:
-        if resp.ok:
-            location = await(resp.json())
-        else:
-            logging.error(f'{functionName} Request for {location_id} ' +
-                f'returned HTTP status {resp.status}')
+    try:
+        async with _m.session.get(f'/places/v2/details/{location_id}') as resp:
+            if resp.ok:
+                location = await(resp.json())
+            else:
+                logging.error(f'{functionName} Request for {location_id} ' +
+                    f'returned HTTP status {resp.status}')
+    except BaseException as err:
+        logging.error(f'Unexpected {err=}, {type(err)=}')
     if location:
         # configure for cosmos db
         location.pop('timestamp')
