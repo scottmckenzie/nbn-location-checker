@@ -4,7 +4,7 @@ import logging
 import os
 import time
 import shared_code.cosmos as cosmos
-from azure.storage.queue import QueueClient
+from azure.storage.queue import QueueClient, BinaryBase64EncodePolicy
 
 
 API_VERSION = 2
@@ -17,7 +17,9 @@ def main(mytimer: func.TimerRequest) -> None:
     
     conn_str = os.getenv('AzureWebJobsStorage')
     queue_name = os.getenv('ProcessSubscriptions_v2.QueueName')
-    queue_client = QueueClient.from_connection_string(conn_str, queue_name)
+    queue_client = QueueClient.from_connection_string(
+        conn_str, queue_name,
+        message_encode_policy = BinaryBase64EncodePolicy())
 
     message_count = 0
     for sub in cosmos.get_subscriptions():
