@@ -6,13 +6,6 @@
       "type": "timerTrigger",
       "direction": "in",
       "schedule": "%ProcessSubscriptions_v2.Schedule%"
-    },
-    {
-      "type": "queue",
-      "direction": "out",
-      "name": "msg",
-      "queueName": "%ProcessSubscriptions_v2.QueueName%",
-      "connection": "AzureWebJobsStorage"
     }
   ]
 }

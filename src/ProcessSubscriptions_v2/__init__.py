@@ -1,25 +1,34 @@
 import azure.functions as func
 import json
 import logging
-import typing
+import os
+import time
 import shared_code.cosmos as cosmos
+from azure.storage.queue import QueueClient
 
 
 API_VERSION = 2
 
-def main(mytimer: func.TimerRequest, msg: func.Out[typing.List[str]]) -> None:
+def main(mytimer: func.TimerRequest) -> None:
     functionName = f"'Functions.ProcessSubscriptions_v2{API_VERSION}'"
     
     if mytimer.past_due:
         logging.info(f'{functionName} The timer is past due!')
     
-    messages = []
+    conn_str = os.getenv('AzureWebJobsStorage')
+    queue_name = os.getenv('ProcessSubscriptions_v2.QueueName')
+    queue_client = QueueClient.from_connection_string(conn_str, queue_name)
+
+    message_count = 0
     for sub in cosmos.get_subscriptions():
-        messages.append(json.dumps(sub))
+        message = json.dumps(sub)
+        queue_client.send_message(message)
+        message_count += 1
+        time.sleep(1)
     
-    if messages:
-        msg.set(messages)
-        logging.info(f'{functionName} Added {len(messages)} message(s) to the queue')
+    if message_count > 0:
+        logging.info(
+            f'{functionName} Added {message_count} message(s) to the queue')
         return
     
     logging.info(f'{functionName} No messages add to the queue')
