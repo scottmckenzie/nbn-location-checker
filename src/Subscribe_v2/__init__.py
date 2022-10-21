@@ -40,7 +40,7 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
     
     # return 400 if connected via FTTB, FTTP, HFC
     techtype = location['addressDetail']['techType']
-    if techtype in ['FTTB', 'FTTP', 'HFC']:
+    if techtype in ['FTTB', 'FTTP', 'HFC', 'SATELLITE']:
         message = (f'{location_id} Connected via {techtype} ' +
                    '(not eligible for upgrade)')
         logging.info(f'{functionName} {message}')
