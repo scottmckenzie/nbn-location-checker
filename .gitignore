@@ -138,3 +138,6 @@ __azurite_db*__.json
 # Terraform files and  directories
 **/.terraform/*
 .terraform.lock.hcl
+
+# MacOS Desktop Services Store
+.DS_Store
