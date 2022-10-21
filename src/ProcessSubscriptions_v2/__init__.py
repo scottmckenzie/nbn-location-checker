@@ -24,9 +24,9 @@ def main(mytimer: func.TimerRequest) -> None:
     message_count = 0
     for sub in cosmos.get_subscriptions():
         message = json.dumps(sub)
-        queue_client.send_message(message)
+        queue_client.send_message(message.encode('ascii'))
         message_count += 1
-        time.sleep(1)
+        time.sleep(0.5)
     
     if message_count > 0:
         logging.info(
