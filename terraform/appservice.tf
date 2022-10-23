@@ -8,12 +8,13 @@ resource "azurerm_service_plan" "app" {
 }
 
 resource "azurerm_storage_account" "app" {
-  name                     = local.storage_account_name
-  location                 = var.location
-  resource_group_name      = azurerm_resource_group.rg.name
-  account_replication_type = "LRS"
-  account_tier             = "Standard"
-  tags                     = {}
+  name                            = local.storage_account_name
+  location                        = var.location
+  resource_group_name             = azurerm_resource_group.rg.name
+  account_replication_type        = "LRS"
+  account_tier                    = "Standard"
+  allow_nested_items_to_be_public = false
+  tags                            = {}
 }
 
 resource "azurerm_storage_queue" "subcheck" {
