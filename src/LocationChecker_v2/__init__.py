@@ -1,7 +1,8 @@
 import azure.functions as func
 import json
 import logging
-from shared_code import cosmos, nbn
+import shared_code.cosmos.aio as cosmos
+from shared_code import nbn
 
 
 API_VERSION = 2
@@ -13,35 +14,37 @@ async def main(msg: func.QueueMessage, message: func.Out[str]) -> None:
 
     msg = msg.get_body().decode('utf-8')
     logging.info(f'{functionName} Processing queue item: {msg}')
-    
+
     # convert json msg string to a dict
     sub = json.loads(msg)
     location_id = sub['id']
-    l1altReason = cosmos.get_alt_reason_code(sub['csa_id'], location_id)
+    # left is our altReasonCode, right is nbn's
+    left = await cosmos.get_alt_reason_code(sub['csa_id'], location_id)
 
-    l2 = await nbn.get_location_async(location_id)
-    if l2 is None:
-        raise Exception(f'Failed to get location {location_id}')
-    if l2['addressDetail']['techType'] == 'FTTP':
+    location = await nbn.get_location_async(location_id)
+    if location is None:
+        raise Exception(f'Failed to get nbn location {location_id}')
+    if location['addressDetail']['techType'] == 'FTTP':
         #TODO send email advising of upgrade and sub removal
         # delete subscription
-        cosmos.delete_subscription(sub)
-    else:
-        l2altReason = l2['addressDetail']['altReasonCode']
-        
-        # has altReasonCode code changed?
-        if l1altReason == l2altReason:
-            return
-        logging.info(f'{functionName} Location {location_id} has changed from '
-            f'{l1altReason} to {l2altReason}')
-        
-        # construct email message(s)
-        subject = nbn.get_nbn_status(l2altReason)
-        for email in sub['subscribers']:
-            message.set(get_email_message(email, subject, l2))
-    
+        await cosmos.delete_subscription(sub)
+        await cosmos.upsert_location(location)
+        return
+
+    right = location['addressDetail']['altReasonCode']
+    # has altReasonCode code changed?
+    if left == right:
+        return
+    logging.info(f'{functionName} Location {location_id} has changed from '
+        f'{left} to {right}')
+
+    # construct email message(s)
+    subject = nbn.get_nbn_status(right)
+    for email in sub['subscribers']:
+        message.set(get_email_message(email, subject, location))
+
     # save updated location details
-    cosmos.upsert_location(l2)
+    await cosmos.upsert_location(location)
 
 def get_email_message(email, subject, location):
     value = f"""Hi
