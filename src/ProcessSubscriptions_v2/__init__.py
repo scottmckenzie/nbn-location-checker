@@ -10,7 +10,7 @@ from azure.storage.queue import QueueClient, BinaryBase64EncodePolicy
 API_VERSION = 2
 
 def main(mytimer: func.TimerRequest) -> None:
-    functionName = f"'Functions.ProcessSubscriptions_v2{API_VERSION}'"
+    functionName = f"'Functions.ProcessSubscriptions_v{API_VERSION}'"
     
     if mytimer.past_due:
         logging.info(f'{functionName} The timer is past due!')
