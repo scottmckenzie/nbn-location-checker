@@ -1,7 +1,7 @@
 import azure.functions as func
 import json
 import logging
-import shared_code.cosmos.aio as cosmos
+import shared_code.cosmos_aio as cosmos
 from shared_code import nbn
 
 
