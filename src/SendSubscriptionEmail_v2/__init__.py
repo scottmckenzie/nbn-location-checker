@@ -15,7 +15,7 @@ def main(input, message) -> bool:
     value = f"""Hi
 
 You have signed up to receive nbn updates for the following location:
-{input['formattedAddress']}
+{input['formatted_address']}
 
 If this is correct, please click this link within 10 minutes to confirm:
 {url}

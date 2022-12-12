@@ -33,5 +33,19 @@ async def get_alt_reason_code(csa_id: str, location_id: str) -> str:
         result = location['addressDetail']['altReasonCode']
     return result
 
+async def get_all_subscriptions() -> list:
+    results = _m.subs.read_all_items()
+    subs = [item async for item in results]
+    return subs
+
+async def get_subscriptions() -> list:
+    results = _m.subs.query_items(
+        query='SELECT * FROM subs s WHERE s.pat_change_status != true')
+    subs = [item async for item in results]
+    return subs
+
 async def upsert_location(location: dict) -> None:
     await _m.locations.upsert_item(location)
+
+async def upsert_subscription(subscription: dict) -> None:
+    await _m.subscription.upsert_item(subscription)

@@ -10,9 +10,9 @@ from urllib.parse import parse_qs
 API_VERSION = 2
 
 async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
-    functionName = f"'Functions.Subscribe_v{API_VERSION}'"
+    function_name = f"'Functions.Subscribe_v{API_VERSION}'"
     logging.info(
-        f'{functionName} httpTrigger processing a {req.method} request')
+        f'{function_name} httpTrigger processing a {req.method} request')
     
     email, location_id = get_params(req)
     
@@ -27,47 +27,49 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
     if not nbn.valid_location(location_id):
         message = f'Invalid location ID: {location_id}'
     if message:
-        logging.info(f'{functionName} {message}')
+        logging.info(f'{function_name} {message}')
         return utils.http_response(400, message)
     
     # return 404 for invalid location_id
     location = await nbn.get_location_async(location_id)
     if location is None:
         message = f'Location {location_id} not found'
-        logging.info(f'{functionName} {message}')
+        logging.info(f'{function_name} {message}')
         return utils.http_response(404, message)
     cosmos.upsert_location(location)
     
     # return 400 if connected via FTTB, FTTP, HFC
-    techtype = location['addressDetail']['techType']
-    if techtype in ['FTTB', 'FTTP', 'HFC', 'SATELLITE']:
-        message = (f'{location_id} Connected via {techtype} ' +
+    tech_type = location['addressDetail']['techType']
+    if tech_type in ['FTTB', 'FTTP', 'HFC', 'SATELLITE']:
+        message = (f'{location_id} Connected via {tech_type} ' +
                    '(not eligible for upgrade)')
-        logging.info(f'{functionName} {message}')
+        logging.info(f'{function_name} {message}')
         return utils.http_response(400, message)
     
     # return 400 if already eligible for FTTP upgrade
-    if location['addressDetail'].get('patChangeStatus') == True:
+    pat_change_status = location['addressDetail'].get('patChangeStatus')
+    if pat_change_status:
         message = f'{location_id} Eligible for FTTP upgrade'
         change_date = location["addressDetail"].get("patChangeDate")
         if change_date:
             message += f' since {change_date}'
-        logging.info(f'{functionName} {message}')
+        logging.info(f'{function_name} {message}')
         return utils.http_response(400, message)
     
     # start durable function for email validation
     durable_input = {
         'csa_id': location['csa_id'],
         'email': email,
-        'formattedAddress': location['addressDetail']['formattedAddress'],
+        'formatted_address': location['addressDetail']['formattedAddress'],
         'location_id': location_id,
+        'pat_change_status': pat_change_status,
         'url': req.url,
     }
     client = df.DurableOrchestrationClient(starter)
     instance_id = await client.start_new(
         f"Orchestrator_v{API_VERSION}", client_input=durable_input)
     logging.info(
-        f'{functionName} Started orchestration with ID {instance_id}')
+        f'{function_name} Started orchestration with ID {instance_id}')
     return func.HttpResponse('Check your email for more info.')
 
 def get_params(req: func.HttpRequest) -> tuple:

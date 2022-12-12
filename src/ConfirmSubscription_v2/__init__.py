@@ -34,6 +34,7 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
     input = json.loads(status.input_)
     email = input['email']
     location_id = input['location_id']
+    pat_change_status = input['pat_change_status']
     sub = cosmos.get_subscription(location_id)
     if sub and email not in sub['subscribers']:
         # add email address to existing subscription
@@ -47,6 +48,7 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
         sub = {
             'csa_id': input['csa_id'],
             'id': location_id,
+            'pat_change_status': pat_change_status,
             'subscribers': [email]
         }
         logging.info(f'{functionName} Adding subscription: {sub}')
