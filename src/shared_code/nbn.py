@@ -72,7 +72,7 @@ def get_location_from_nbn_api(location: str):
 def get_nbn_status(code: str) -> str:
     fn = '[get_nbn_status]'
     if code == 'FTTP_NA':
-        return 'Good news! You may be able to upgrade to FTTP soon'
+        return 'FTTP may be available at your location soon'
     if code == 'FTTP_SA':
         return 'Good news! You may be able to upgrade to FTTP'
     logging.error(f'{fn} Unknown code {code}')
