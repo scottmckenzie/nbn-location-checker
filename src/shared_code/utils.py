@@ -14,10 +14,8 @@ def get_html_file(filename: str) -> str:
     return html
 
 def http_response(status_code: int, message: str = None):
-    filename = f'{status_code}.html'
-    if status_code == 200:
-        filename = f'index.html'
-    body = get_html_file(filename)
+    map = {200: html_200, 400: html_400, 404: html_404}
+    body = map.get(status_code)
     if message:
         body = body.format(message)
     mimetype = mimetypes.types_map['.html']
@@ -27,3 +25,33 @@ def valid_email(email: str) -> bool:
     if re.fullmatch(_m.pattern, email):
         return True
     return False
+
+html_200 = '''<!doctype html>
+<html>
+    <body>
+        <form method="POST">
+        <label for="location">NBN Location ID:</label><br>
+        <input name="location" type="text" required="required" pattern="LOC\d{12}" placeholder="LOC000178376736">
+        &nbsp;<a href="https://www.aussiebroadband.com.au/nbn-poi/" target="_blank">Click here</a> to get your Location ID<br>
+        <label for="email">Email address:</label><br>
+        <input name="email" type="email" required="required"><br><br>
+        <input type="submit" value="Submit">
+        </form>
+    </body>
+</html>'''
+
+html_400 = '''<!doctype html>
+<html>
+    <body>
+        <h1>400 Bad request</h1>
+        {}
+    </body>
+</html>'''
+
+html_404 = '''<!doctype html>
+<html>
+    <body>
+        <h1>Not found</h1>
+        {}
+    </body>
+</html>'''
